@@ -2,14 +2,14 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using UnityEngine.InputSystem.Interactions;
 
 namespace TeamFourteen.CoreGame
 {
     public class PlayerMovement : MonoBehaviour
     {
         [SerializeField] private float moveSpeed;
-        [SerializeField] private float rotateSpeed;
+        [SerializeField] private float hRotateSpeed;
+        [SerializeField] private float vRotateSpeed;
         [SerializeField] [HideInInspector] private Camera m_camera;
         [SerializeField] [HideInInspector] private CharacterController m_characterController;
 
@@ -47,9 +47,7 @@ namespace TeamFourteen.CoreGame
         {
             var scaledMoveSpeed = moveSpeed * Time.deltaTime;
             
-            // For simplicity's sake, we just keep movement in a single plane here. Rotate
-            // direction according to world Y rotation of player.
-            
+            // for now, only translate along Y plane
             Vector3 move = Quaternion.Euler(0, transform.eulerAngles.y, 0) * new Vector3(direction.x, 0, direction.y);
             m_characterController.Move(move * scaledMoveSpeed);
         }
@@ -57,12 +55,13 @@ namespace TeamFourteen.CoreGame
         float cameraRotation;
         private void Look(Vector2 rotate)
         {
-            float scaledRotateSpeed = rotateSpeed * Time.deltaTime;
-            
-            m_Rotation.y += rotate.x * scaledRotateSpeed;
-            cameraRotation = Mathf.Clamp(cameraRotation - rotate.y * scaledRotateSpeed, -89, 89);
-
+            // rotate the player body along the Y axis
+            m_Rotation.y += rotate.x * hRotateSpeed * Time.deltaTime;
             transform.localEulerAngles = m_Rotation;
+
+            // rotate the camera along the X axis
+            cameraRotation = Mathf.Clamp(cameraRotation - rotate.y * vRotateSpeed * Time.deltaTime, -89, 89);
+            m_camera.transform.localEulerAngles = new Vector2(cameraRotation, 0);
         }
     }
 }

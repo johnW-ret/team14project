@@ -155,7 +155,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   moveSpeed: 3.5
-  rotateSpeed: 5
+  hRotateSpeed: 5
+  vRotateSpeed: 5
   m_camera: {fileID: 963194227}
   m_characterController: {fileID: 615709094}
 --- !u!114 &615709093
@@ -524,7 +525,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh-12286
+  m_Name: pb_Mesh21848
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
