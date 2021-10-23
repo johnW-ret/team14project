@@ -10,7 +10,6 @@ namespace TeamFourteen.CoreGame
     {
         [SerializeField] private float moveSpeed;
         [SerializeField] private float rotateSpeed;
-        [SerializeField] private float cameraRotateYSpeed;
         [SerializeField] [HideInInspector] private Camera m_camera;
         [SerializeField] [HideInInspector] private CharacterController m_characterController;
 
