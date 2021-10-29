@@ -1,8 +1,11 @@
-﻿namespace TeamFourteen.CoreGame
+﻿using System;
+using UnityEngine;
+
+namespace TeamFourteen.CoreGame
 {
     public interface IPickupable
     {
-        void Pickup();
+        void Pickup(Transform holder, Action OnComplete);
         void Release();
     }
 }

@@ -9,23 +9,44 @@ namespace TeamFourteen.CoreGame
     {
         [SerializeField] private Transform objectHolderTransform;
         private Camera _camera;
-        private ObjectContainer<IPickupable> pickupableContainer = new ObjectContainer<IPickupable>();
-        private bool doSelect;
+        private ActionObjectContainer<IPickupable> pickupableContainer;
+
+        private void Awake()
+        {
+            pickupableContainer = new ActionObjectContainer<IPickupable>(
+                (pickupable) => pickupable.Pickup(objectHolderTransform, OnPickupComplete),
+                (pickupable) => pickupable.Release());
+        }
 
         private void Start()
         {
             _camera = Camera.main;
         }
 
+        private void OnPickupComplete()
+        {
+            // do thing with state machine
+        }
+
         public void OnFire(InputAction.CallbackContext context)
         {
-            if (context.started)
-                doSelect = context.ReadValueAsButton();
+            if (context.performed)
+            {
+                if (pickupableContainer.Selected == null)
+                {
+                    if (lookingAt != null)
+                        pickupableContainer.Select(lookingAt);
+                }
+                else
+                    pickupableContainer.Deselect();
+            }
         }
 
         RaycastHit raycastHit;
+        IPickupable lookingAt = null;
         private void Update()
         {
+            lookingAt = null;
             // if we are not holding anything
             if (pickupableContainer.Selected == null)
             {
@@ -35,18 +56,13 @@ namespace TeamFourteen.CoreGame
                     // if said thing is a pickupable
                     if (raycastHit.transform.TryGetComponent<IPickupable>(out IPickupable pickupable))
                     {
-                        if (doSelect)
-                            pickupableContainer.Select(pickupable);
+                        lookingAt = pickupable;
                     }
                 }
             }
-            else
-            {
-                if (doSelect)
-                    pickupableContainer.Deselect();
-            }
 
-            Debug.Log(pickupableContainer.Selected?.ToString() ?? "None");
+            if (pickupableContainer.Selected != null)
+                Debug.Log(pickupableContainer.Selected.ToString());
         }
     }
 }

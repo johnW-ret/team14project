@@ -12,14 +12,41 @@
             private T selected;
             public T Selected => selected;
 
-            public void Select(T _object)
+            public virtual void Select(T _object)
             {
                 selected = _object;
             }
 
-            public void Deselect()
+            public virtual void Deselect()
             {
                 selected = null;
+            }
+        }
+
+        public class ActionObjectContainer<T> : ObjectContainer<T> where T : class
+        {
+            public delegate void OnSelectEvent(T _object);
+            public readonly OnSelectEvent OnSelect;
+            public readonly OnSelectEvent OnDeselect;
+
+            public ActionObjectContainer(OnSelectEvent OnSelect, OnSelectEvent OnDeselect, T initialSelected = null)
+            {
+                this.OnSelect += OnSelect;
+                this.OnDeselect += OnDeselect;
+            }
+
+            public override void Select(T _object)
+            {
+                OnSelect.Invoke(_object);
+
+                base.Select(_object);
+            }
+
+            public override void Deselect()
+            {
+                OnDeselect.Invoke(Selected);
+
+                base.Deselect();
             }
         }
     }
