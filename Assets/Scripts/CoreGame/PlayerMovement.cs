@@ -43,12 +43,19 @@ namespace TeamFourteen.CoreGame
             Move(m_Move);
         }
 
+        float yVelocity;
         private void Move(Vector2 direction)
         {
-            var scaledMoveSpeed = moveSpeed * Time.deltaTime;
-            
-            // for now, only translate along Y plane
-            Vector3 move = Quaternion.Euler(0, transform.eulerAngles.y, 0) * new Vector3(direction.x, 0, direction.y);
+            float scaledMoveSpeed = moveSpeed * Time.deltaTime;
+
+            // calculate Y velocity
+            if (m_characterController.isGrounded)
+                yVelocity = 0;
+            else
+                yVelocity += Physics.gravity.y * Time.deltaTime;
+
+            // translate X and Z based on movement input
+            Vector3 move = Quaternion.Euler(0, transform.eulerAngles.y, 0) * new Vector3(direction.x, yVelocity, direction.y);
             m_characterController.Move(move * scaledMoveSpeed);
         }
 
