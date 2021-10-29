@@ -314,6 +314,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   objectHolderTransform: {fileID: 8766264682480424108}
+  grabDistance: 2
 --- !u!143 &8766264682087676139
 CharacterController:
   m_ObjectHideFlags: 0

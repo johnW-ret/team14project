@@ -2,14 +2,21 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
+//using UnityEditor;
 
 namespace TeamFourteen.CoreGame
 {
     public partial class HoldObject : MonoBehaviour
     {
+        [Header("Object References")]
         [SerializeField] private Transform objectHolderTransform;
         private Camera _camera;
+        
         private ActionObjectContainer<IPickupable> pickupableContainer;
+        private Ray selectRay;
+
+        [Header("Values")]
+        [SerializeField] private float grabDistance = 2;
 
         private void Awake()
         {
@@ -47,11 +54,14 @@ namespace TeamFourteen.CoreGame
         private void Update()
         {
             lookingAt = null;
+
             // if we are not holding anything
             if (pickupableContainer.Selected == null)
             {
+                selectRay = new Ray(_camera.transform.position, _camera.transform.forward);
+                
                 // if we hit something
-                if (Physics.Raycast(_camera.transform.position, _camera.transform.forward, out raycastHit))
+                if (Physics.Raycast(selectRay, out raycastHit, grabDistance))
                 {
                     // if said thing is a pickupable
                     if (raycastHit.transform.TryGetComponent<IPickupable>(out IPickupable pickupable))
