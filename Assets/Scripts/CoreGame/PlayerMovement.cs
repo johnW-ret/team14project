@@ -28,6 +28,12 @@ namespace TeamFourteen.CoreGame
 
         private void Reset() => SetReferences();
 
+        private void Start()
+        {
+            Cursor.lockState = CursorLockMode.Locked;
+            Cursor.visible = false;
+        }
+
         [ContextMenu("Set References")]
         private void SetReferences()
         {
