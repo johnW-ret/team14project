@@ -70,9 +70,6 @@ namespace TeamFourteen.CoreGame
                     }
                 }
             }
-
-            if (pickupableContainer.Selected != null)
-                Debug.Log(pickupableContainer.Selected.ToString());
         }
     }
 }
