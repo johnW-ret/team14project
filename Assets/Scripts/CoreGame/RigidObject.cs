@@ -31,7 +31,6 @@ namespace TeamFourteen.CoreGame
             transform.SetParent(holder);
 
             pickupTransition = StartCoroutine(LerpToOrigin(0.025f, OnComplete));
-            pickupTransition = null;
         }
 
         /// <summary>
@@ -46,8 +45,10 @@ namespace TeamFourteen.CoreGame
             for (float t = 0; t <= 1; t += deltaT)
             {
                 if (!held)
+                {
                     StopCoroutine(pickupTransition);
-
+                    goto Exit;
+                }
                 transform.localPosition = Vector3.Lerp(transform.localPosition, Vector3.zero, t);
                 yield return null;
             }
@@ -56,6 +57,9 @@ namespace TeamFourteen.CoreGame
 
             // invoke is never called if lerp does not finish
             FinishedCallback.Invoke();
+
+            Exit:;
+            // TODO maybe callback whether lerp to origin was success
         }
 
         public void Release()
