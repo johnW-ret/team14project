@@ -1,9 +1,5 @@
-﻿using System;
-using UnityEngine;
-
-namespace TeamFourteen.CoreGame
+﻿namespace TeamFourteen.Selection
 {
-    // move to new Selection namespace?
     public delegate void OnSelectEvent<T>(T _object);
 
     /// <summary>

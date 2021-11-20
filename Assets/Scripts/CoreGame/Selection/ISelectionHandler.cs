@@ -1,4 +1,4 @@
-﻿namespace TeamFourteen.CoreGame
+﻿namespace TeamFourteen.Selection
 {
     /// <summary>
     /// Represents an object that can execute selection event methods of type <typeparamref name="T"/>.

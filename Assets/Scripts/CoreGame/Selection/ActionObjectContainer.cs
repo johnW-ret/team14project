@@ -1,7 +1,7 @@
 ﻿using System;
 using UnityEngine;
 
-namespace TeamFourteen.CoreGame
+namespace TeamFourteen.Selection
 {
     /// <summary>
     /// Holds objects of type <typeparamref name="T"/> and calls events that we have subscribed to.

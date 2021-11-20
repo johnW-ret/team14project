@@ -1,4 +1,4 @@
-﻿namespace TeamFourteen.CoreGame
+﻿namespace TeamFourteen.Selection
 {
     /// <summary>
     /// Represents a container that holds references to <see cref="ISelectionHandler{T}"/> and calls <see cref="OnSelectEvent{T}"/> events.
