@@ -18,6 +18,11 @@ namespace TeamFourteen.CoreGame
                 _rigidbody = GetComponent<Rigidbody>();
         }
 
+        private void Reset()
+        {
+            SetReferences();
+        }
+
         Coroutine pickupTransition;
         public void Pickup(Transform holder, Action OnComplete)
         {

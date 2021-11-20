@@ -27,8 +27,10 @@ namespace TeamFourteen.CoreGame
 
         private void Reset() => SetReferences();
 
-        private void Start()
+        protected override void Start()
         {
+            base.Start();
+
             Cursor.lockState = CursorLockMode.Locked;
             Cursor.visible = false;
         }

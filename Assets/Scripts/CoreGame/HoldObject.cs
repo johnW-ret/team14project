@@ -6,7 +6,7 @@ using UnityEngine.InputSystem;
 
 namespace TeamFourteen.CoreGame
 {
-    public partial class HoldObject : MonoBehaviour
+    public partial class HoldObject : MonoBehaviour, ISelectionHandlerContainer<IPickupable>
     {
         [Header("Object References")]
         [SerializeField] private Transform objectHolderTransform;
@@ -28,6 +28,11 @@ namespace TeamFourteen.CoreGame
         private void Start()
         {
             _camera = Camera.main;
+        }
+
+        public bool Subscribe(ISelectionHandler<IPickupable> handler)
+        {
+            return pickupableContainer.Subscribe(handler);
         }
 
         private void OnPickupComplete()

@@ -1,53 +1,33 @@
-﻿namespace TeamFourteen.CoreGame
+﻿using System;
+using UnityEngine;
+
+namespace TeamFourteen.CoreGame
 {
-    public partial class HoldObject
+    // move to new Selection namespace?
+    public delegate void OnSelectEvent<T>(T _object);
+
+    /// <summary>
+    /// Holds object of type <typeparamref name="T"/>.
+    /// </summary>
+    /// <typeparam name="T">Type of object that is being selected.</typeparam>
+    public class ObjectContainer<T> where T : class
     {
-        public class ObjectContainer<T> where T : class
+        public ObjectContainer(T initialSelected = null)
         {
-            public ObjectContainer(T initialSelected = null)
-            {
-                selected = initialSelected;
-            }
-
-            private T selected;
-            public T Selected => selected;
-
-            public virtual void Select(T _object)
-            {
-                selected = _object;
-            }
-
-            public virtual void Deselect()
-            {
-                selected = null;
-            }
+            selected = initialSelected;
         }
 
-        public class ActionObjectContainer<T> : ObjectContainer<T> where T : class
+        private T selected;
+        public T Selected => selected;
+
+        public virtual void Select(T _object)
         {
-            public delegate void OnSelectEvent(T _object);
-            public readonly OnSelectEvent OnSelect;
-            public readonly OnSelectEvent OnDeselect;
+            selected = _object;
+        }
 
-            public ActionObjectContainer(OnSelectEvent OnSelect, OnSelectEvent OnDeselect, T initialSelected = null)
-            {
-                this.OnSelect += OnSelect;
-                this.OnDeselect += OnDeselect;
-            }
-
-            public override void Select(T _object)
-            {
-                OnSelect.Invoke(_object);
-
-                base.Select(_object);
-            }
-
-            public override void Deselect()
-            {
-                OnDeselect.Invoke(Selected);
-
-                base.Deselect();
-            }
+        public virtual void Deselect()
+        {
+            selected = null;
         }
     }
 }
