@@ -5,9 +5,8 @@ using UnityEngine.InputSystem;
 
 namespace TeamFourteen.CoreGame
 {
-    public class PlayerMovement : MonoBehaviour
+    public class PlayerMovement : Movement
     {
-        [SerializeField] private float moveSpeed;
         [SerializeField] private float hRotateSpeed;
         [SerializeField] private float vRotateSpeed;
         [SerializeField] [HideInInspector] private Camera m_camera;
@@ -52,7 +51,7 @@ namespace TeamFourteen.CoreGame
         float yVelocity;
         private void Move(Vector2 direction)
         {
-            float scaledMoveSpeed = moveSpeed * Time.deltaTime;
+            float scaledMoveSpeed = MoveSpeed * Time.deltaTime;
 
             // calculate Y velocity
             if (m_characterController.isGrounded)
