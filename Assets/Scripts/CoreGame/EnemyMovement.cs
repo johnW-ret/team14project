@@ -3,32 +3,35 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
-[RequireComponent(typeof(NavMeshAgent))]
-public class EnemyMovement : MonoBehaviour
+namespace TeamFourteen.CoreGame
 {
-    [SerializeField] private Transform target;
-    [SerializeField] [HideInInspector] private NavMeshAgent nmAgent;
-
-    private void Reset()
+    [RequireComponent(typeof(NavMeshAgent))]
+    public class EnemyMovement : Movement
     {
-        SetRefernces();
-    }
+        [SerializeField] private Transform target;
+        [SerializeField] [HideInInspector] private NavMeshAgent nmAgent;
 
-    [ContextMenu("Set References")]
-    private void SetRefernces()
-    {
-        if (!nmAgent)
-            nmAgent = GetComponent<NavMeshAgent>();
-    }
+        private void Reset()
+        {
+            SetRefernces();
+        }
 
-    private void Update()
-    {
-        Move();
-    }
+        [ContextMenu("Set References")]
+        private void SetRefernces()
+        {
+            if (!nmAgent)
+                nmAgent = GetComponent<NavMeshAgent>();
+        }
 
-    private void Move()
-    {
-        if (target)
-            nmAgent.destination = target.position;
+        private void Update()
+        {
+            Move();
+        }
+
+        private void Move()
+        {
+            if (target)
+                nmAgent.destination = target.position;
+        }
     }
 }
