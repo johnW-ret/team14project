@@ -4,18 +4,26 @@ using UnityEngine.AI;
 
 namespace TeamFourteen.CoreGame
 {
+    public enum PatrollerType
+    {
+        Loop,
+        FollowPath
+    }
+
     [RequireComponent(typeof(NavMeshAgent))]
     public class EnemyMovement : Movement
     {
+        [Header("References")]
+        [Tooltip("List of points that the Actor patrols between.")]
         [SerializeField] [HideInInspector] private NavMeshAgent nmAgent;
+        [SerializeField] private List<PatrolPoints> patrolPoints;
 
-        //List of Patrol Points the GameObject can move to
-        [SerializeField] List<PatrolPoints> patrolPoints;
+        [Header("Properties")]
+        [Tooltip("Defines the patrol method. Does not change behaviour during runtime.")]
+        [SerializeField] private PatrollerType patrollerType;
 
-        //Patrol Points Variables
-        int currentPPoint;
-        bool patrolNext;
-        bool travelling;
+        private EnemyAIBehaviourProcess aiProcess = new EnemyAIBehaviourProcess();
+        private Patroller patroller;
 
         [ContextMenu("Set References")]
         private void SetRefernces()
@@ -29,89 +37,115 @@ namespace TeamFourteen.CoreGame
             SetRefernces();
         }
 
-        private void CheckPatrolPoints()
+        private bool CheckPatrolPoints()
         {
             //Checks to see if there are points in the list and that there are at least 2 of those points
             if (patrolPoints != null && patrolPoints.Count >= 2)
-            {
-                //Sets the first target destination
-                currentPPoint = 0;
-                SetTarget();
-                patrolNext = true;
-                travelling = true;
-                //Debug.Log("Current Point in list: " + currentPPoint);
-            }
+                return true;
             else
                 Debug.Log("Issue in number of Patrol Points.");
+
+            return false;
         }
 
         protected override void Start()
         {
             base.Start();
 
-            CheckPatrolPoints();
+            if (CheckPatrolPoints())
+            {
+                // define patroller
+                switch (patrollerType)
+                {
+                    case PatrollerType.FollowPath:
+                        patroller = new PathPatroller(patrolPoints);
+                        break;
+
+                    case PatrollerType.Loop:
+                        patroller = new LoopPatroller(patrolPoints);
+                        break;
+                }
+                
+                aiProcess.TryMoveNext(EnemyAIBehaviourProcess.Command.Enable);
+            }
         }
 
-        private void FixedUpdate()
+        private void Update()
         {
             Move();
         }
 
         private void Move()
         {
-            //Changes to next target if Object is within 0.05 of the current target
-            if (travelling && nmAgent.remainingDistance <= 0.05f)
+            // Changes to next target if Object is within 0.05 of the current target
+            if (aiProcess.CurrentState == BehaviourState.Patrol && nmAgent.remainingDistance <= 0.05f)
+                SetTarget(patroller.GetNextPoint());
+        }
+
+        private void SetTarget(Vector3 target)
+        {
+            nmAgent.SetDestination(target);
+        }
+
+        private class LoopPatroller : Patroller
+        {
+            public LoopPatroller(List<PatrolPoints> patrolPoints) : base(patrolPoints)
             {
-                travelling = false;
-                ChangePoint();
-                //Debug.Log("Current Point in list: " + currentPPoint);
-                SetTarget();
+                currentPPoint = -1;
+            }
+
+            public override Vector3 GetNextPoint()
+            {
+                if (++currentPPoint >= points.Count)
+                    currentPPoint = 0;
+
+                return points[currentPPoint].transform.position;
             }
         }
 
-        private void ChangePoint()
+        private class PathPatroller : Patroller
         {
-            //Checks if the GameObject is going forward or backwards in the list of points
-            if (patrolNext)
+            public PathPatroller(List<PatrolPoints> patrolPoints) : base(patrolPoints)
             {
-                //Increments to the next point
-                currentPPoint++;
-
-                //Checks if the increment is over the list.
-                if (currentPPoint >= patrolPoints.Count)
-                {
-                    //Sets the patrol backwards
-                    currentPPoint = currentPPoint - 2;
-                    patrolNext = false;
-                }
+                currentPPoint = -1;
             }
-            else
-            {
-                //Moving backwards through the list of points
-                currentPPoint--;
 
-                //If increment is less than 0 sets patrol to forward position
-                if (currentPPoint < 0)
+            private bool forward = true;
+
+            public override Vector3 GetNextPoint()
+            {
+                if (forward)
                 {
-                    currentPPoint = 1;
-                    patrolNext = true;
+                    if (++currentPPoint >= points.Count)
+                    {
+                        currentPPoint--;
+                        forward = false;
+                    }
                 }
+                else
+                {
+                    if (--currentPPoint < 0)
+                    {
+                        currentPPoint++;
+                        forward = true;
+                    }
+                }
+
+                return points[currentPPoint].transform.position;
             }
         }
 
-        private void SetTarget()
+        private abstract class Patroller
         {
-            //Checks to see if there are points in the list
-            if (patrolPoints != null)
+            public Patroller(List<PatrolPoints> patrolPoints)
             {
-                //Sets the current index of the list transform to variable target
-                Vector3 target = patrolPoints[currentPPoint].transform.position;
-                //Sets the GameObjects destination to target location
-                nmAgent.SetDestination(target);
-                travelling = true;
+                points = patrolPoints;
             }
-            else
-                Debug.Log("There are no patrol points in the list");
+
+            protected List<PatrolPoints> points;
+            protected int currentPPoint;
+
+            public abstract Vector3 GetNextPoint();
         }
     }
 }
