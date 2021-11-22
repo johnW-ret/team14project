@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -8,7 +7,6 @@ namespace TeamFourteen.CoreGame
     [RequireComponent(typeof(NavMeshAgent))]
     public class EnemyMovement : Movement
     {
-        //[SerializeField] private Transform target;
         [SerializeField] [HideInInspector] private NavMeshAgent nmAgent;
 
         //List of Patrol Points the GameObject can move to
@@ -19,18 +17,6 @@ namespace TeamFourteen.CoreGame
         bool patrolNext;
         bool travelling;
 
-        private void Reset()
-        {
-            SetRefernces();
-        }
-
-        protected override void Start()
-        {
-            base.Start();
-
-            CheckPatrolPoints();
-        }
-
         [ContextMenu("Set References")]
         private void SetRefernces()
         {
@@ -38,28 +24,9 @@ namespace TeamFourteen.CoreGame
                 nmAgent = GetComponent<NavMeshAgent>();
         }
 
-        private void FixedUpdate()
+        private void Reset()
         {
-            Move();
-        }
-
-        private void Move()
-        {
-            //Changes to next target if Object is within 0.05 of the current target
-            if (travelling && nmAgent.remainingDistance <= 0.05f)
-            {
-                travelling = false;
-                ChangePoint();
-                //Debug.Log("Current Point in list: " + currentPPoint);
-                SetTarget();
-
-            }
-
-
-            /*
-            if (target)
-                nmAgent.destination = target.position;
-            */
+            SetRefernces();
         }
 
         private void CheckPatrolPoints()
@@ -76,6 +43,30 @@ namespace TeamFourteen.CoreGame
             }
             else
                 Debug.Log("Issue in number of Patrol Points.");
+        }
+
+        protected override void Start()
+        {
+            base.Start();
+
+            CheckPatrolPoints();
+        }
+
+        private void FixedUpdate()
+        {
+            Move();
+        }
+
+        private void Move()
+        {
+            //Changes to next target if Object is within 0.05 of the current target
+            if (travelling && nmAgent.remainingDistance <= 0.05f)
+            {
+                travelling = false;
+                ChangePoint();
+                //Debug.Log("Current Point in list: " + currentPPoint);
+                SetTarget();
+            }
         }
 
         private void ChangePoint()
