@@ -12,9 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9ef00569be067ef4ba878a5dc8ae798b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveSpeed: 0
-  target: {fileID: 0}
+  moveSpeed: 3.5
   nmAgent: {fileID: 0}
+  patrolPoints: []
 --- !u!195 &2053194831200761599
 NavMeshAgent:
   m_ObjectHideFlags: 0
