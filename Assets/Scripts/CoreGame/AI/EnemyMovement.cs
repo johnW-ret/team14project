@@ -22,7 +22,6 @@ namespace TeamFourteen.AI
         private ObjectContainer<Transform> targetSelector = new ObjectContainer<Transform>();
 
         [SerializeField] private List<PatrolPoints> patrolPoints;
-        [SerializeField] [HideInInspector] private Transform root;
 
         [Header("Properties")]
         [Tooltip("Defines the patrol method. Does not change behaviour during runtime.")]
@@ -37,8 +36,6 @@ namespace TeamFourteen.AI
         {
             if (!nmAgent)
                 nmAgent = GetComponent<NavMeshAgent>();
-            if (!root)
-                root = transform.GetChild(0);
         }
 
         private void Reset()
@@ -80,22 +77,46 @@ namespace TeamFourteen.AI
                 aiProcess.SetInOutAction(() => { patrolLoop.Start(); }, BehaviourState.Patrol, Core.ActionProcess<BehaviourState, EnemyAIBehaviourProcess.Command>.StateDirection.In);
                 aiProcess.SetInOutAction(() => { patrolLoop.Stop(); }, BehaviourState.Patrol, Core.ActionProcess<BehaviourState, EnemyAIBehaviourProcess.Command>.StateDirection.Out);
 
-                aiProcess.TryMoveNext(EnemyAIBehaviourProcess.Command.Enable);
+                aiProcess.SetInOutAction(() => { inspectLoop.Start(); }, BehaviourState.Investigate, Core.ActionProcess<BehaviourState, EnemyAIBehaviourProcess.Command>.StateDirection.In);
+                aiProcess.SetInOutAction(() => { inspectLoop.Stop(); inspectLoop = null; }, BehaviourState.Investigate, Core.ActionProcess<BehaviourState, EnemyAIBehaviourProcess.Command>.StateDirection.Out);
+
+                if (!aiProcess.TryMoveNext(EnemyAIBehaviourProcess.Command.Enable))
+                    Debug.LogError($"Error starting Enemy AI {gameObject.name} state machine.");
             }
         }
 
         private void Update()
         {
             // set position target each frame if gameobject is not static
-            if (!targetSelector.Selected?.gameObject.isStatic ?? false)
+            if (nmAgent.enabled && (!targetSelector.Selected?.gameObject.isStatic ?? false))
             {
                 nmAgent.SetDestination(targetSelector.Selected.position);
-            }
+            } 
+        }
 
-            // DEBUG, temporary
-            // Press "I" on the keyboard to exit the Patrol state and move to the Notice state.
-            if (UnityEngine.InputSystem.Keyboard.current.iKey.wasPressedThisFrame)
-                aiProcess.TryMoveNext(EnemyAIBehaviourProcess.Command.Notice);
+        private void FixedUpdate()
+        {
+            if (aiProcess.CurrentState != BehaviourState.Investigate)
+                LongLineOfSight();
+        }
+
+        RaycastHit hit;
+        private void LongLineOfSight()
+        {
+            // search for long-range
+            Ray longLineOfSight = new Ray(transform.position + (1.05f * transform.forward), transform.forward);
+            if (Physics.Raycast(longLineOfSight, out hit, 20)
+                && hit.transform.gameObject.layer == LayerMask.NameToLayer("Player"))   // later, only detect player if holding lantern
+            {
+                Debug.Log(hit.transform.gameObject.name);
+                Notice(hit.point);
+            }
+        }
+
+        private void Notice(Vector3 inspectPosition)
+        {
+            inspectLoop = new InspectLoop(this, inspectPosition, nmAgent);
+            aiProcess.TryMoveNext(EnemyAIBehaviourProcess.Command.Notice);
         }
 
         /// <summary>
@@ -109,22 +130,73 @@ namespace TeamFourteen.AI
             nmAgent.SetDestination(target.position);
         }
 
+        private InspectLoop inspectLoop;
+
+        class InspectLoop : BehaviourLoop
+        {
+            public InspectLoop(EnemyMovement enemyMovement, Vector3 inspectPosition, NavMeshAgent nmAgent) : base(enemyMovement)
+            {
+                this.nmAgent = nmAgent;
+                insPosition = inspectPosition;
+
+                inspectTargetGO = new GameObject("Inspection Target");
+                inspectTargetGO.transform.position = insPosition;
+            }
+
+            private readonly GameObject inspectTargetGO;
+            public Transform inspectTarget => inspectTargetGO.transform;
+            private NavMeshAgent nmAgent;
+            private Vector3 insPosition;
+            private Coroutine inspect;
+
+            public override void Start()
+            {
+                enemyMovement.SetTarget(inspectTarget);
+                inspect = enemyMovement.StartCoroutine(Inspect());
+            }
+
+            public override void Stop()
+            {
+                enemyMovement.StopCoroutine(inspect);
+                nmAgent.enabled = true;
+
+                enemyMovement.targetSelector.Deselect();
+                Destroy(inspectTargetGO);
+            }
+
+            private IEnumerator Inspect()
+            {
+                yield return new WaitUntil(() => nmAgent.pathPending == false);
+
+                while (nmAgent.remainingDistance > 0.05f)
+                {
+                    yield return null;
+                }
+
+                nmAgent.enabled = false;
+                yield return LookAround();
+                nmAgent.enabled = true;
+
+                // return to patrol
+                enemyMovement.aiProcess.TryMoveNext(EnemyAIBehaviourProcess.Command.Forget);
+            }
+        }
+
         class PatrolLoop : BehaviourLoop
         {
-            public PatrolLoop(EnemyMovement enemyMovement, Patroller patroller, NavMeshAgent nmAgent)
+            public PatrolLoop(EnemyMovement enemyMovement, Patroller patroller, NavMeshAgent nmAgent) : base(enemyMovement)
             {
-                this.enemyMovement = enemyMovement;
                 this.nmAgent = nmAgent;
                 this.patroller = patroller;
             }
 
-            private EnemyMovement enemyMovement;
             private NavMeshAgent nmAgent;
             private Patroller patroller;
             private Coroutine patrol;
 
             public override void Start()
             {
+                enemyMovement.SetTarget(patroller.GetNextPoint());
                 patrol = enemyMovement.StartCoroutine(Patrol());
             }
 
@@ -136,6 +208,8 @@ namespace TeamFourteen.AI
 
             private IEnumerator Patrol()
             {
+                yield return new WaitUntil(() => nmAgent.pathPending == false);
+
                 while (true)
                 {
                     if (nmAgent.remainingDistance <= 0.05f)
@@ -150,11 +224,24 @@ namespace TeamFourteen.AI
                     yield return null;
                 }
             }
+        }
 
-            private IEnumerator LookAround()
+        abstract class BehaviourLoop
+        {
+            public BehaviourLoop(EnemyMovement enemyMovement)
+            {
+                this.enemyMovement = enemyMovement;
+            }
+
+            protected readonly EnemyMovement enemyMovement;
+
+            public abstract void Start();
+            public abstract void Stop();
+
+            protected IEnumerator LookAround()
             {
                 float initialYRotation = enemyMovement.transform.localEulerAngles.y;
-                for (float i = 0; i < 1; i += 0.002f)
+                for (float i = 0; i < 1; i += 0.00225f)
                 {
                     enemyMovement.transform.localEulerAngles = new Vector3(0, initialYRotation + enemyMovement.lookBehaviourCurve.Evaluate(i) * 360, 0);
                     yield return null;
@@ -162,12 +249,6 @@ namespace TeamFourteen.AI
 
                 enemyMovement.transform.localEulerAngles = new Vector3(0, 0, 0);
             }
-        }
-
-        abstract class BehaviourLoop
-        {
-            public abstract void Start();
-            public abstract void Stop();
         }
     }
 }
