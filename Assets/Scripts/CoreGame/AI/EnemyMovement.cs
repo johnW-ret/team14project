@@ -16,11 +16,11 @@ namespace TeamFourteen.AI
             FollowPath
         }
 
-        [Header("References")]
-        [Tooltip("List of points that the Actor patrols between.")]
         [SerializeField] [HideInInspector] private NavMeshAgent nmAgent;
         private ObjectContainer<Transform> targetSelector = new ObjectContainer<Transform>();
 
+        [Header("References")]
+        [Tooltip("List of points that the Actor patrols between.")]
         [SerializeField] private List<PatrolPoints> patrolPoints;
 
         [Header("Properties")]
@@ -80,6 +80,9 @@ namespace TeamFourteen.AI
                 aiProcess.SetInOutAction(() => { inspectLoop.Start(); }, BehaviourState.Investigate, Core.ActionProcess<BehaviourState, EnemyAIBehaviourProcess.Command>.StateDirection.In);
                 aiProcess.SetInOutAction(() => { inspectLoop.Stop(); inspectLoop = null; }, BehaviourState.Investigate, Core.ActionProcess<BehaviourState, EnemyAIBehaviourProcess.Command>.StateDirection.Out);
 
+                aiProcess.SetInOutAction(() => { followLoop.Start(); }, BehaviourState.Follow, Core.ActionProcess<BehaviourState, EnemyAIBehaviourProcess.Command>.StateDirection.In);
+                aiProcess.SetInOutAction(() => { followLoop.Stop(); followLoop = null; }, BehaviourState.Follow, Core.ActionProcess<BehaviourState, EnemyAIBehaviourProcess.Command>.StateDirection.Out);
+
                 if (!aiProcess.TryMoveNext(EnemyAIBehaviourProcess.Command.Enable))
                     Debug.LogError($"Error starting Enemy AI {gameObject.name} state machine.");
             }
@@ -96,8 +99,17 @@ namespace TeamFourteen.AI
 
         private void FixedUpdate()
         {
-            if (aiProcess.CurrentState != BehaviourState.Investigate)
+            if (aiProcess.CurrentState != BehaviourState.Investigate && aiProcess.CurrentState != BehaviourState.Follow)
                 LongLineOfSight();
+            else if (aiProcess.CurrentState == BehaviourState.Investigate)
+                ShortLineOfSight();
+
+        }
+
+        private void OnDrawGizmos()
+        {
+            Gizmos.color = Color.yellow;
+            Gizmos.DrawRay(transform.position + (1.05f * transform.forward), transform.forward * 7);
         }
 
         RaycastHit hit;
@@ -105,11 +117,22 @@ namespace TeamFourteen.AI
         {
             // search for long-range
             Ray longLineOfSight = new Ray(transform.position + (1.05f * transform.forward), transform.forward);
-            if (Physics.Raycast(longLineOfSight, out hit, 20)
+            if (Physics.Raycast(longLineOfSight, out hit, 7)
                 && hit.transform.gameObject.layer == LayerMask.NameToLayer("Player"))   // later, only detect player if holding lantern
             {
-                Debug.Log(hit.transform.gameObject.name);
+                Debug.Log("Long: " + hit.transform.gameObject.name);
                 Notice(hit.point);
+            }
+        }
+
+        private void ShortLineOfSight()
+        {
+            Ray shortLineOfSight = new Ray(transform.position + (1.05f * transform.forward), transform.forward);
+            if (Physics.Raycast(shortLineOfSight, out hit, 2)
+                && hit.transform.gameObject.layer == LayerMask.NameToLayer("Player"))
+            {
+                Debug.Log("Short: " + hit.transform.gameObject.name);
+                See(hit.transform);
             }
         }
 
@@ -117,6 +140,18 @@ namespace TeamFourteen.AI
         {
             inspectLoop = new InspectLoop(this, inspectPosition, nmAgent);
             aiProcess.TryMoveNext(EnemyAIBehaviourProcess.Command.Notice);
+        }
+
+        private void See(Transform followPosition)
+        {
+            followLoop = new FollowLoop(this, followPosition, nmAgent);
+            aiProcess.TryMoveNext(EnemyAIBehaviourProcess.Command.See);
+        }
+
+        private void LoseTrack(Vector3 inspectPosition)
+        {
+            inspectLoop = new InspectLoop(this, inspectPosition, nmAgent);
+            aiProcess.TryMoveNext(EnemyAIBehaviourProcess.Command.LoseTrack);
         }
 
         /// <summary>
@@ -128,6 +163,52 @@ namespace TeamFourteen.AI
             targetSelector.Deselect();
             targetSelector.Select(target);
             nmAgent.SetDestination(target.position);
+        }
+
+        private FollowLoop followLoop;
+
+        class FollowLoop : BehaviourLoop
+        {
+            public FollowLoop(EnemyMovement enemyMovement, Transform followPosition, NavMeshAgent nmAgent) : base(enemyMovement)
+            {
+                this.nmAgent = nmAgent;
+
+                followTraget = followPosition;
+            }
+
+            public Transform followTraget;
+            private NavMeshAgent nmAgent;
+            private Coroutine follow;
+            private float lostDistance = 3.5f;
+
+            public override void Start()
+            {
+                enemyMovement.SetTarget(followTraget);
+                follow = enemyMovement.StartCoroutine(Follow());
+            }
+
+            public override void Stop()
+            {
+                enemyMovement.StopCoroutine(follow);
+                nmAgent.enabled = true;
+
+                enemyMovement.targetSelector.Deselect();
+            }
+
+            private IEnumerator Follow()
+            {
+                yield return new WaitUntil(() => nmAgent.pathPending == false);
+
+                while (nmAgent.remainingDistance > 0.05f && nmAgent.remainingDistance < lostDistance)
+                {
+                    yield return null;
+                }
+
+                if (nmAgent.remainingDistance > lostDistance)
+                {
+                    enemyMovement.LoseTrack(followTraget.position);
+                }
+            }
         }
 
         private InspectLoop inspectLoop;
@@ -247,7 +328,7 @@ namespace TeamFourteen.AI
                     yield return null;
                 }
 
-                enemyMovement.transform.localEulerAngles = new Vector3(0, 0, 0);
+                enemyMovement.transform.localEulerAngles = new Vector3(0, initialYRotation, 0);
             }
         }
     }
