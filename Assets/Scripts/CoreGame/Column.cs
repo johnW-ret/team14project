@@ -4,9 +4,20 @@ namespace TeamFourteen.CoreGame
 {
     public class Column : ObjectHolder
     {
+        [SerializeField] [HideInInspector] private ParticleSystem flame;
+
         [Header("Values")]
         [SerializeField] private float pickupRadius = 2.5f;
-        
+        private bool lit;
+
+        [ContextMenu("Set References")]
+        private void SetReferences()
+        {
+            flame = transform.Find("Object Holder").GetComponentInChildren<ParticleSystem>();
+        }
+
+        private void Reset() => SetReferences();
+
         int hits;
         Collider[] colliderHits = new Collider[8];
         private void Update()
@@ -26,6 +37,19 @@ namespace TeamFourteen.CoreGame
                     }
                 }
             }
+        }
+
+        private void LightFlame()
+        {
+            flame.Play();
+            lit = true;
+        }
+
+        protected override void OnPickupComplete()
+        {
+            base.OnPickupComplete();
+
+            LightFlame();
         }
     }
 }

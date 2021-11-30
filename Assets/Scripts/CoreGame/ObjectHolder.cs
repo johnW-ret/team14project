@@ -49,7 +49,7 @@ namespace TeamFourteen.CoreGame
                 Debug.LogWarning($"Attempted to release null object on {gameObject.name}");
         }
 
-        private void OnPickupComplete()
+        protected virtual void OnPickupComplete()
         {
             // do thing with state machine
         }
