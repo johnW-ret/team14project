@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace TeamFourteen.CoreGame
+namespace TeamFourteen.AI
 {
     public class PatrolPoint : MonoBehaviour
     {
