@@ -5,7 +5,7 @@ namespace TeamFourteen.AI
 {
     public class PathPatroller : Patroller
     {
-        public PathPatroller(List<PatrolPoints> patrolPoints) : base(patrolPoints)
+        public PathPatroller(List<PatrolPoint> patrolPoints) : base(patrolPoints)
         {
             currentPPoint = -1;
         }

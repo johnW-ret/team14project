@@ -21,7 +21,7 @@ namespace TeamFourteen.AI
 
         [Header("References")]
         [Tooltip("List of points that the Actor patrols between.")]
-        [SerializeField] private List<PatrolPoints> patrolPoints;
+        [SerializeField] private List<PatrolPoint> patrolPoints;
 
         [Header("Properties")]
         [Tooltip("Defines the patrol method. Does not change behaviour during runtime.")]

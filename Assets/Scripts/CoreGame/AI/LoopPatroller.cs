@@ -5,7 +5,7 @@ namespace TeamFourteen.AI
 {
     public class LoopPatroller : Patroller
     {
-        public LoopPatroller(List<PatrolPoints> patrolPoints) : base(patrolPoints)
+        public LoopPatroller(List<PatrolPoint> patrolPoints) : base(patrolPoints)
         {
             currentPPoint = -1;
         }
