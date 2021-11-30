@@ -4,10 +4,11 @@ using UnityEngine;
 
 namespace TeamFourteen.CoreGame
 {
-    public class RigidObject : MonoBehaviour, IPickupable
+    public class RigidObject : MonoBehaviour, IOwnedPickupable
     {
         [SerializeField] private Rigidbody _rigidbody;
         private Transform _parent = null;
+        private ObjectHolder objectHolder = null;
         // maybe replace with state machine
         bool held = false;
 
@@ -24,6 +25,9 @@ namespace TeamFourteen.CoreGame
         }
 
         Coroutine pickupTransition;
+
+        public bool CanPickup => !held;
+
         public void Pickup(Transform holder, Action OnComplete)
         {
             held = true;
@@ -34,6 +38,7 @@ namespace TeamFourteen.CoreGame
 
             _parent = transform.parent;
             transform.SetParent(holder);
+            holder.parent?.TryGetComponent(out objectHolder);
 
             pickupTransition = StartCoroutine(LerpToOrigin(0.025f, OnComplete));
         }
@@ -75,12 +80,30 @@ namespace TeamFourteen.CoreGame
 
             transform.SetParent(_parent);
             transform.position = holder.position;
+            objectHolder = null;
 
             _rigidbody.velocity = Vector3.zero;
             _rigidbody.angularVelocity = Vector3.zero;
             _rigidbody.isKinematic = false;
 
             _parent = null;
+        }
+
+        protected virtual bool CanReleaseTo(ObjectHolder holder) => true;
+
+        public virtual bool RequestRelease(ObjectHolder holder)
+        {
+            if (CanReleaseTo(holder))
+            {
+                // we call holder.Release(), not Release(), because holder manages object
+                // admit this isn't the greatest design. May have IPickupable defer to holder
+                // for all public facing methods
+                if (objectHolder != null)
+                    objectHolder.Release();
+                return true;
+            }
+
+            return false;
         }
     }
 }

@@ -1,43 +1,22 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.InputSystem;
 using TeamFourteen.Selection;
 
 namespace TeamFourteen.CoreGame
 {
-    public partial class HoldObject : MonoBehaviour, ISelectionHandlerContainer<IPickupable>
+    // replace with ObjectHolder that communicates with Player input?
+    public partial class PlayerObjectHolder : ObjectHolder, ISelectionHandlerContainer<IPickupable>
     {
-        [Header("Object References")]
-        [SerializeField] private Transform objectHolderTransform;
         private Camera _camera;
         
-        private ActionObjectContainer<IPickupable> pickupableContainer;
         private Ray selectRay;
 
         [Header("Values")]
         [SerializeField] private float grabDistance = 2;
 
-        private void Awake()
-        {
-            pickupableContainer = new ActionObjectContainer<IPickupable>(
-                (pickupable) => pickupable.Pickup(objectHolderTransform, OnPickupComplete),
-                (pickupable) => pickupable.Release());
-        }
-
         private void Start()
         {
             _camera = Camera.main;
-        }
-
-        public bool Subscribe(ISelectionHandler<IPickupable> handler)
-        {
-            return pickupableContainer.Subscribe(handler);
-        }
-
-        private void OnPickupComplete()
-        {
-            // do thing with state machine
         }
 
         public void OnFire(InputAction.CallbackContext context)
@@ -47,7 +26,7 @@ namespace TeamFourteen.CoreGame
                 if (pickupableContainer.Selected == null)
                 {
                     if (lookingAt != null)
-                        pickupableContainer.Select(lookingAt);
+                        TrySelect(lookingAt);
                 }
                 else
                     pickupableContainer.Deselect();

@@ -9,7 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4488807843309184504}
-  - component: {fileID: 4538562248923862474}
+  - component: {fileID: 6739905866590453674}
   m_Layer: 0
   m_Name: PatrolPoint
   m_TagString: Untagged
@@ -31,7 +31,7 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &4538562248923862474
+--- !u!114 &6739905866590453674
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -40,7 +40,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 3746157691616109270}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9eb0a7b25ff28cd4bace5501ae3cc359, type: 3}
+  m_Script: {fileID: 11500000, guid: 6877475a5fe3e3d48ac7c77e17b6d2b3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   PointRadius: 0.5
