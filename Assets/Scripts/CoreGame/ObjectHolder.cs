@@ -22,7 +22,7 @@ namespace TeamFourteen.CoreGame
 
         private void Reset() => SetReferences();
 
-        private void Awake()
+        protected virtual void Awake()
         {
             pickupableContainer = new ActionObjectContainer<IPickupable>(TryPickup, TryRelease);
         }

@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using System.Linq;
+using UnityEngine;
 
 namespace TeamFourteen.CoreGame
 {
@@ -10,6 +12,21 @@ namespace TeamFourteen.CoreGame
         [Header("Values")]
         [SerializeField] private float pickupRadius = 2.5f;
         private bool lit;
+        private static int idCounter = -1;
+        private static Dictionary<int, Column> columns = new Dictionary<int, Column>();
+        // bad but oh well
+        public static int NumberOfColumnsRemaining => columns.Values.Where((Column c) => c.lit).Count();
+        public static int NumberOfColumns => columns.Count;
+
+        protected override void Awake()
+        {
+            base.Awake();
+
+            if (columns.ContainsKey(idCounter + 1))
+                Debug.LogWarning($"Dictionary already contains column {gameObject.name}");
+            else
+                columns.Add(++idCounter, this);
+        }
 
         // context menu doesn't work for some reason. even on base class. inheritance problems with serialization?
         [ContextMenu("Set References")]
