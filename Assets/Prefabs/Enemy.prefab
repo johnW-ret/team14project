@@ -96,6 +96,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: Enemy
       objectReference: {fileID: 0}
+    - target: {fileID: 996978065046423939, guid: 0414f9b01db11f14c952d2ec26375860,
+        type: 3}
+      propertyPath: m_Layer
+      value: 11
+      objectReference: {fileID: 0}
     - target: {fileID: 996978065046423943, guid: 0414f9b01db11f14c952d2ec26375860,
         type: 3}
       propertyPath: m_Materials.Array.data[0]
