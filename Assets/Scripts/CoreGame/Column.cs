@@ -5,18 +5,24 @@ namespace TeamFourteen.CoreGame
     public class Column : ObjectHolder
     {
         [SerializeField] [HideInInspector] private ParticleSystem flame;
+        [SerializeField] [HideInInspector] private Checkpoint checkpoint;
 
         [Header("Values")]
         [SerializeField] private float pickupRadius = 2.5f;
         private bool lit;
 
+        // context menu doesn't work for some reason. even on base class. inheritance problems with serialization?
         [ContextMenu("Set References")]
-        private void SetReferences()
+        protected override void SetReferences()
         {
-            flame = transform.Find("Object Holder").GetComponentInChildren<ParticleSystem>();
-        }
+            base.SetReferences();
 
-        private void Reset() => SetReferences();
+            flame = transform.Find("Object Holder").GetComponentInChildren<ParticleSystem>();
+
+            if (!checkpoint)
+                if (!transform.Find("Checkpoint").TryGetComponent(out checkpoint))
+                    Debug.LogWarning($"Checkpoint cannot be found on {gameObject.name}. Will not be used as checkpoint position.");
+        }
 
         int hits;
         Collider[] colliderHits = new Collider[8];
@@ -43,6 +49,9 @@ namespace TeamFourteen.CoreGame
         {
             flame.Play();
             lit = true;
+
+            if (checkpoint)
+                GameManager.SetCheckpoint(checkpoint);
         }
 
         protected override void OnPickupComplete()

@@ -50,6 +50,13 @@ namespace TeamFourteen.CoreGame
             Move(m_Move);
         }
 
+        public void Teleport(Vector3 position)
+        {
+            m_characterController.enabled = false;
+            transform.position = position;
+            m_characterController.enabled = true;
+        }
+
         float yVelocity;
         private void Move(Vector2 direction)
         {

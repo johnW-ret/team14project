@@ -12,8 +12,7 @@ namespace TeamFourteen.CoreGame
 
         protected ActionObjectContainer<IPickupable> pickupableContainer;
 
-        [ContextMenu("Set References")]
-        private void SetReferences()
+        protected virtual void SetReferences()
         {
             if (!transform.Find("Object Holder"))
                 Debug.LogWarning($"Cannot find Object Holder on {gameObject.name}. Object holder will not be assigned");
