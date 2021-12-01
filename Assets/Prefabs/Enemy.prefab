@@ -13,8 +13,55 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   moveSpeed: 3.5
-  nmAgent: {fileID: 0}
-  patrolPoints: []
+  nmAgent: {fileID: 2053194831200761599}
+  patrolPoints:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  patrollerType: 0
+  lookBehaviourCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 1.2475961
+      outSlope: 1.2475961
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 0.24848697
+      value: 0.3100114
+      inSlope: 0.021101475
+      outSlope: 0.021101475
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 0.750564
+      value: -0.29518878
+      inSlope: -0.010984182
+      outSlope: -0.010984182
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 1.5747972
+      outSlope: 1.5747972
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.23532405
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
 --- !u!195 &2053194831200761599
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -62,7 +109,7 @@ PrefabInstance:
     - target: {fileID: 996978065046423945, guid: 0414f9b01db11f14c952d2ec26375860,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: 57.383
+      value: 53
       objectReference: {fileID: 0}
     - target: {fileID: 996978065046423945, guid: 0414f9b01db11f14c952d2ec26375860,
         type: 3}
@@ -72,7 +119,7 @@ PrefabInstance:
     - target: {fileID: 996978065046423945, guid: 0414f9b01db11f14c952d2ec26375860,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: 1.05
+      value: 8.8
       objectReference: {fileID: 0}
     - target: {fileID: 996978065046423945, guid: 0414f9b01db11f14c952d2ec26375860,
         type: 3}
