@@ -15,6 +15,13 @@ MonoBehaviour:
   moveSpeed: 3.5
   nmAgent: {fileID: 0}
   patrolPoints: []
+  patrollerType: 0
+  lookBehaviourCurve:
+    serializedVersion: 2
+    m_Curve: []
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
 --- !u!195 &2053194831200761599
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -107,6 +114,11 @@ PrefabInstance:
     - target: {fileID: 996978065046423945, guid: 0414f9b01db11f14c952d2ec26375860,
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3423345927422540628, guid: 0414f9b01db11f14c952d2ec26375860,
+        type: 3}
+      propertyPath: m_Enabled
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []

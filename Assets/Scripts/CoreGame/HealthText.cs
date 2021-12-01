@@ -6,6 +6,8 @@ namespace TeamFourteen.CoreGame
     {
         [SerializeField] [HideInInspector] private IFloatPublisher health;  // does not serialize for some reason. we call SetReferences() on Awake()
         [SerializeField] [HideInInspector] private TextMesh textMesh;
+        private readonly Color defaultColor = Color.white;
+        private const float warningZone = 5f;
 
         [ContextMenu("Set References")]
         private void SetReferences()
@@ -32,6 +34,7 @@ namespace TeamFourteen.CoreGame
         private void UpdateText(float newValue)
         {
             textMesh.text = string.Format("{0:F1}", newValue);
+            textMesh.color = Color.Lerp(Color.red, defaultColor, newValue / warningZone);
         }
     }
 }
