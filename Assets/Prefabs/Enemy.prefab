@@ -44,6 +44,50 @@ NavMeshAgent:
   m_BaseOffset: 1
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
+--- !u!1 &6128592469233115225
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 714694863175833602}
+  - component: {fileID: 4487392848575874940}
+  m_Layer: 0
+  m_Name: Damage Zone
+  m_TagString: Damage
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &714694863175833602
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6128592469233115225}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 2963632563250528274}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!135 &4487392848575874940
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6128592469233115225}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 1.5
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1001 &2663046135629138331
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -126,6 +170,12 @@ PrefabInstance:
 --- !u!1 &2963632563250528280 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 996978065046423939, guid: 0414f9b01db11f14c952d2ec26375860,
+    type: 3}
+  m_PrefabInstance: {fileID: 2663046135629138331}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &2963632563250528274 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 996978065046423945, guid: 0414f9b01db11f14c952d2ec26375860,
     type: 3}
   m_PrefabInstance: {fileID: 2663046135629138331}
   m_PrefabAsset: {fileID: 0}
