@@ -16,7 +16,7 @@ namespace TeamFourteen.AI
             FollowPath
         }
 
-        [SerializeField] [HideInInspector] private NavMeshAgent nmAgent;
+        [SerializeField] private NavMeshAgent nmAgent;
         private ObjectContainer<Transform> targetSelector = new ObjectContainer<Transform>();
 
         [Header("References")]

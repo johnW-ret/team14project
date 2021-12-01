@@ -13,12 +13,48 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   moveSpeed: 3.5
-  nmAgent: {fileID: 0}
+  nmAgent: {fileID: 2053194831200761599}
   patrolPoints: []
   patrollerType: 0
   lookBehaviourCurve:
     serializedVersion: 2
-    m_Curve: []
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 2.0379055
+      outSlope: 2.0379055
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 0.2447644
+      value: 0.49880672
+      inSlope: 0.14522767
+      outSlope: 0.14522767
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 0.7510676
+      value: -0.38593286
+      inSlope: -0.09854907
+      outSlope: -0.09854907
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 2.3095257
+      outSlope: 2.3095257
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.20424658
+      outWeight: 0
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
@@ -32,7 +68,7 @@ NavMeshAgent:
   m_Enabled: 1
   m_AgentTypeID: 0
   m_Radius: 0.5
-  m_Speed: 3.5
+  m_Speed: 2.25
   m_Acceleration: 8
   avoidancePriority: 50
   m_AngularSpeed: 120
@@ -54,7 +90,7 @@ GameObject:
   m_Component:
   - component: {fileID: 714694863175833602}
   - component: {fileID: 4487392848575874940}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: Damage Zone
   m_TagString: Damage
   m_Icon: {fileID: 0}
@@ -99,6 +135,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Enemy
+      objectReference: {fileID: 0}
+    - target: {fileID: 996978065046423939, guid: 0414f9b01db11f14c952d2ec26375860,
+        type: 3}
+      propertyPath: m_Layer
+      value: 11
       objectReference: {fileID: 0}
     - target: {fileID: 996978065046423943, guid: 0414f9b01db11f14c952d2ec26375860,
         type: 3}
