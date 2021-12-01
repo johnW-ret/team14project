@@ -7,6 +7,7 @@ namespace TeamFourteen.CoreGame
     public class Column : ObjectHolder
     {
         [SerializeField] [HideInInspector] private ParticleSystem flame;
+        [SerializeField] private Transform flameLight;
         [SerializeField] [HideInInspector] private Checkpoint checkpoint;
 
         [Header("Values")]
@@ -35,6 +36,10 @@ namespace TeamFourteen.CoreGame
             base.SetReferences();
 
             flame = transform.Find("Object Holder").GetComponentInChildren<ParticleSystem>();
+
+            if (!flameLight)
+                if ((flameLight = transform.Find("Flame Light")) == null)
+                    Debug.LogWarning($"Flame light transform cannot be found on {gameObject.name}.");
 
             if (!checkpoint)
                 if (!transform.Find("Checkpoint").TryGetComponent(out checkpoint))
@@ -65,6 +70,7 @@ namespace TeamFourteen.CoreGame
         private void LightFlame()
         {
             flame.Play();
+            flameLight.GetComponent<Light>().enabled = true;
             lit = true;
 
             if (checkpoint)
