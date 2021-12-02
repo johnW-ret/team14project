@@ -13,6 +13,7 @@ namespace TeamFourteen.CoreGame
         [Header("Values")]
         [SerializeField] private float pickupRadius = 2.5f;
         private bool lit;
+        private const int SearchLayerMask = ~(int)LayerManager.Layers.Items;
         private static int idCounter = -1;
         private static Dictionary<int, Column> columns = new Dictionary<int, Column>();
         // bad but oh well
@@ -53,7 +54,7 @@ namespace TeamFourteen.CoreGame
             // if we are not holding anything
             if (pickupableContainer.Selected == null)
             {
-                hits = Physics.OverlapSphereNonAlloc(transform.position, pickupRadius, colliderHits, ~LayerMask.NameToLayer("Items"));
+                hits = Physics.OverlapSphereNonAlloc(transform.position, pickupRadius, colliderHits, SearchLayerMask);
 
                 // if we hit something
                 for (int h = 0; h < hits; h++)

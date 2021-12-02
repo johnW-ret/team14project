@@ -28,6 +28,7 @@ namespace TeamFourteen.AI
         [SerializeField] private PatrollerType patrollerType;
         [SerializeField] private AnimationCurve lookBehaviourCurve;
 
+        private const int VisionLayerMask = (int)LayerManager.Layers.Player;
         private const int longRangeLength = 10;
         private const int shortRangeLength = 3;
         // prefer getters and setters, fields do for now
@@ -161,7 +162,7 @@ namespace TeamFourteen.AI
             // search for short range
             Ray shortLineOfSight = GetVisionRay();
             if (Physics.Raycast(shortLineOfSight, out hit, shortRangeLength)
-                && hit.transform.gameObject.layer == LayerMask.NameToLayer("Player"))
+                && hit.transform.gameObject.layer == VisionLayerMask)
             {
                 Debug.Log("Short: " + hit.transform.gameObject.name);
                 return See(hit.transform);
@@ -175,7 +176,7 @@ namespace TeamFourteen.AI
             // search for long-range
             Ray longLineOfSight = GetVisionRay();
             if (Physics.Raycast(longLineOfSight, out hit, longRangeLength)
-                && hit.transform.gameObject.layer == LayerMask.NameToLayer("Player"))   // later, only detect player if holding lantern
+                && hit.transform.gameObject.layer == VisionLayerMask)   // later, only detect player if holding lantern
             {
                 Debug.Log("Long: " + hit.transform.gameObject.name);
                 return Notice(hit.point);
